@@ -1,0 +1,29 @@
+﻿@model IQueryable<DoubleBooking.Domain.Model.BookingReportViewModel>
+@{
+    ViewBag.Title = "Report";
+}
+
+
+<div class="jumbotron">
+    <h4>Double Booking Report by Local Authorities</h4>
+</div>
+
+<div class="container">
+    <div class="col-md-6 col-md-offset-3">
+        @{
+            <div class="row">
+                <div class="col-md-4"><b>Local Authorities</b></div>
+                <div class="col-md-6"><b>No. of Double Booked</b></div>
+            </div>
+                foreach (var bookingReportViewModel in Model)
+                {
+                <div class="row">
+                    <div class="col-md-4">@bookingReportViewModel.LocalAuthoritieName</div>
+                    <div class="col-md-6">@bookingReportViewModel.DoubleBooked</div>
+                </div>
+                }
+        }
+
+     </div>
+</div>
+
