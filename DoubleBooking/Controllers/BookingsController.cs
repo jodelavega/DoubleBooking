@@ -6,17 +6,48 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using System.Web.Http.ModelBinding;
+using System.Web.Http.Routing;
 using DoubleBooking.Domain.Entities;
 using DoubleBooking.Infrastructure.Data;
 
 namespace DoubleBooking.Controllers
 {
-    public class BookingsController : ApiController
+    public interface IBookingsController
     {
-        private DoubleBookingContext db = new DoubleBookingContext();
+        IQueryable<Booking> GetBookings();
+        IHttpActionResult GetBooking(int id);
+        IHttpActionResult PutBooking(int id, Booking booking);
+        IHttpActionResult PostBooking(Booking booking);
+        IHttpActionResult DeleteBooking(int id);
+        Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken);
+        void Validate<TEntity>(TEntity entity);
+        void Validate<TEntity>(TEntity entity, string keyPrefix);
+        void Dispose();
+        HttpConfiguration Configuration { get; set; }
+        HttpControllerContext ControllerContext { get; set; }
+        HttpActionContext ActionContext { get; set; }
+        ModelStateDictionary ModelState { get; }
+        HttpRequestMessage Request { get; set; }
+        HttpRequestContext RequestContext { get; set; }
+        UrlHelper Url { get; set; }
+        IPrincipal User { get; set; }
+    }
 
+    public class BookingsController : ApiController, IBookingsController
+    {
+        private readonly IDoubleBookingContext db;
+
+        public BookingsController(IDoubleBookingContext db)
+        {
+            this.db = db;
+        }
         // GET: api/Bookings
         public IQueryable<Booking> GetBookings()
         {

@@ -12,13 +12,21 @@ namespace DoubleBooking.Controllers
 {
     public class HomeController : Controller
     {
-        private DoubleBookingContext db = new DoubleBookingContext();
+        private readonly IDoubleBookingContext db;
+        private readonly IBookingsController bookingsController;
 
-        
+        public HomeController(IDoubleBookingContext db, IBookingsController bookingsController)
+        {
+            this.db = db;
+            this.bookingsController = bookingsController;
+        }
+
         public ActionResult Index()
         {
-            BookingsViewModel model = new BookingsViewModel();
-            model.LocalAuthorities = GetLocalAuthorities();
+            BookingsViewModel model = new BookingsViewModel
+            {
+                LocalAuthorities = GetLocalAuthorities()
+            };
 
             return View(model);
         }
@@ -41,7 +49,6 @@ namespace DoubleBooking.Controllers
             try
             {
                 model.LocalAuthorities = GetLocalAuthorities();
-                BookingsController bookingsController = new BookingsController();
 
                 var clerk = db.Clerks.FirstOrDefault(x => x.Email.Equals(model.Email.Trim(), StringComparison.OrdinalIgnoreCase));
                 if (clerk == null)
